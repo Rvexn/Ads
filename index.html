@@ -6,8 +6,8 @@
     <title>Link Shortener & Monetizer</title>
     <style>
         body { font-family: 'Arial', sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
-        .box { background: white; max-width: 750px; margin: 30px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .ad-container { min-height: 280px; background: #fafafa; margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-direction: column; }
+        .box { background: white; max-width: 500px; margin: 30px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .ad-container { min-height: 260px; background: #fafafa; margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
         .btn { background: #007bff; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         #timer { font-size: 24px; color: #e74c3c; font-weight: bold; margin: 15px 0; }
@@ -21,32 +21,30 @@
     <h3>🔗 Short Link Generator</h3>
     <input type="text" id="urlInput" placeholder="Apna Link Yahan Paste Karein">
     
-    <label style="display:block; text-align:left; margin-top:10px;">Kitne Steps (Ads) Play Karne Hain?</label>
+    <label style="display:block; text-align:left; margin-top:10px; font-size: 14px;">Kitne Ads Steps Lagane Hain?</label>
     <select id="adCount" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px;">
-        <option value="1">1 Ad Step</option>
-        <option value="2">2 Ad Steps</option>
-        <option value="3">3 Ad Steps</option>
-        <option value="4">4 Ad Steps</option>
-        <option value="5">5 Ad Steps</option>
+        <option value="1">1 Step (Fast)</option>
+        <option value="2">2 Steps</option>
+        <option value="3">3 Steps</option>
+        <option value="5">5 Steps (Max Earnings)</option>
     </select>
 
     <button class="btn" onclick="generate()">Create Short Link</button>
     
     <div id="out" class="hidden" style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
-        <p>Aapka Short Link:</p>
+        <p style="font-size: 14px; font-weight: bold;">Aapka Monetized Link:</p>
         <input type="text" id="res" readonly style="background: #e9ecef;">
         <button class="btn" style="background: #28a745;" onclick="copyLink()">Copy Link</button>
     </div>
 </div>
 
 <div id="player" class="box hidden">
-    <div style="font-size: 14px; color: #666;" id="stepTxt">Step 1 of X</div>
-    <h2 id="msgHeader">Please Wait... Ads Loading</h2>
+    <div style="font-size: 14px; color: #666; font-weight: bold;" id="stepTxt">Step 1 of X</div>
+    <h2 style="font-size: 18px; margin: 10px 0;">Please wait...</h2>
     
-    <div class="ad-container">
-        <span class="ad-label">Sponsored Advertisement</span>
-        <div id="adSpace"></div>
-    </div>
+    <div class="ad-label"></div>
+    <div class="ad-container" id="adBox">
+        </div>
 
     <div id="timer">Intezar Karein: <span id="sec">10</span>s</div>
     <button id="nextBtn" class="btn hidden" onclick="nextStep()">Continue Next Step</button>
@@ -55,12 +53,37 @@
 <script>
     let current = 1, total = 1, targetLink = "";
 
+    // Ad refresh karne ke liye function
+    function injectAd() {
+        const adBox = document.getElementById('adBox');
+        adBox.innerHTML = ''; // Purana ad hatao
+        
+        const script1 = document.createElement('script');
+        script1.type = 'text/javascript';
+        script1.text = `
+            atOptions = {
+                'key' : '93a193b076fd180d29521c7b352feee3',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+        `;
+        
+        const script2 = document.createElement('script');
+        script2.type = 'text/javascript';
+        script2.src = 'https://www.highperformanceformat.com/93a193b076fd180d29521c7b352feee3/invoke.js';
+        
+        adBox.appendChild(script1);
+        adBox.appendChild(script2);
+    }
+
     function generate() {
         let inputUrl = document.getElementById('urlInput').value;
         if(!inputUrl) { alert("Pehle link dalein!"); return; }
         
         let ads = document.getElementById('adCount').value;
-        let encoded = btoa(inputUrl);
+        let encoded = btoa(inputUrl); // URL Encode
         let shortUrl = window.location.href.split('?')[0] + "?go=" + encoded + "&s=" + ads;
         
         document.getElementById('res').value = shortUrl;
@@ -72,31 +95,6 @@
         copyText.select();
         document.execCommand("copy");
         alert("Link Copy Ho Gaya!");
-    }
-
-    // Ads Refresh Karne ka Function
-    function loadAdsterra() {
-        const adSpace = document.getElementById('adSpace');
-        adSpace.innerHTML = ""; // Purana ad saaf karein
-        
-        const scriptConfig = document.createElement('script');
-        scriptConfig.type = 'text/javascript';
-        scriptConfig.text = `
-            atOptions = {
-                'key' : '93a193b076fd180d29521c7b352feee3',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-            };
-        `;
-        
-        const scriptInvoke = document.createElement('script');
-        scriptInvoke.type = 'text/javascript';
-        scriptInvoke.src = 'https://www.highperformanceformat.com/93a193b076fd180d29521c7b352feee3/invoke.js';
-        
-        adSpace.appendChild(scriptConfig);
-        adSpace.appendChild(scriptInvoke);
     }
 
     window.onload = function() {
@@ -112,14 +110,11 @@
     }
 
     function startProcess() {
+        injectAd(); // Ad load karein
         document.getElementById('stepTxt').innerText = "Step " + current + " of " + total;
         document.getElementById('nextBtn').classList.add('hidden');
         document.getElementById('timer').classList.remove('hidden');
-        document.getElementById('msgHeader').innerText = "Ads Play Ho Rahe Hain...";
         
-        // Naya Ad Load Karein
-        loadAdsterra();
-
         let timeLeft = 10;
         document.getElementById('sec').innerText = timeLeft;
 
@@ -130,7 +125,7 @@
                 clearInterval(interval);
                 document.getElementById('timer').classList.add('hidden');
                 document.getElementById('nextBtn').classList.remove('hidden');
-                document.getElementById('msgHeader').innerText = "Step Ready!";
+                
                 if(current == total) {
                     document.getElementById('nextBtn').innerText = "Get Final Link";
                     document.getElementById('nextBtn').style.background = "#28a745";
@@ -142,10 +137,9 @@
     function nextStep() {
         if(current < total) {
             current++;
-            startProcess(); 
+            startProcess(); // Naya step aur naya ad
         } else {
-            // Final Link Open karne se pehle loader dikha sakte hain
-            document.getElementById('msgHeader').innerText = "Redirecting...";
+            // Final Redirection
             window.location.href = targetLink;
         }
     }
