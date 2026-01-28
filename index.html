@@ -7,11 +7,12 @@
     <style>
         body { font-family: 'Arial', sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
         .box { background: white; max-width: 750px; margin: 30px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .ad-container { min-height: 100px; background: #fafafa; margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .ad-container { min-height: 280px; background: #fafafa; margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-direction: column; }
         .btn { background: #007bff; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         #timer { font-size: 24px; color: #e74c3c; font-weight: bold; margin: 15px 0; }
         .hidden { display: none; }
+        .ad-label { font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -20,11 +21,13 @@
     <h3>🔗 Short Link Generator</h3>
     <input type="text" id="urlInput" placeholder="Apna Link Yahan Paste Karein">
     
-    <label style="display:block; text-align:left; margin-top:10px;">Kitne Ads Play Karne Hain?</label>
+    <label style="display:block; text-align:left; margin-top:10px;">Kitne Steps (Ads) Play Karne Hain?</label>
     <select id="adCount" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px;">
-        <option value="1">1 Ad Play</option>
-        <option value="2">2 Ads Play</option>
-        <option value="3">3 Ads Play</option>
+        <option value="1">1 Ad Step</option>
+        <option value="2">2 Ad Steps</option>
+        <option value="3">3 Ad Steps</option>
+        <option value="4">4 Ad Steps</option>
+        <option value="5">5 Ad Steps</option>
     </select>
 
     <button class="btn" onclick="generate()">Create Short Link</button>
@@ -38,20 +41,12 @@
 
 <div id="player" class="box hidden">
     <div style="font-size: 14px; color: #666;" id="stepTxt">Step 1 of X</div>
-    <h2>Ads Play Ho Rahe Hain...</h2>
+    <h2 id="msgHeader">Please Wait... Ads Loading</h2>
     
     <div class="ad-container">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '230e1317cf6c6aefafca7af5db34234f',
-                'format' : 'iframe',
-                'height' : 90,
-                'width' : 728,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/230e1317cf6c6aefafca7af5db34234f/invoke.js"></script>
-        </div>
+        <span class="ad-label">Sponsored Advertisement</span>
+        <div id="adSpace"></div>
+    </div>
 
     <div id="timer">Intezar Karein: <span id="sec">10</span>s</div>
     <button id="nextBtn" class="btn hidden" onclick="nextStep()">Continue Next Step</button>
@@ -65,7 +60,6 @@
         if(!inputUrl) { alert("Pehle link dalein!"); return; }
         
         let ads = document.getElementById('adCount').value;
-        // Link ko chhota karne ke liye encoding
         let encoded = btoa(inputUrl);
         let shortUrl = window.location.href.split('?')[0] + "?go=" + encoded + "&s=" + ads;
         
@@ -80,7 +74,31 @@
         alert("Link Copy Ho Gaya!");
     }
 
-    // REDIRECTION LOGIC
+    // Ads Refresh Karne ka Function
+    function loadAdsterra() {
+        const adSpace = document.getElementById('adSpace');
+        adSpace.innerHTML = ""; // Purana ad saaf karein
+        
+        const scriptConfig = document.createElement('script');
+        scriptConfig.type = 'text/javascript';
+        scriptConfig.text = `
+            atOptions = {
+                'key' : '93a193b076fd180d29521c7b352feee3',
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+        `;
+        
+        const scriptInvoke = document.createElement('script');
+        scriptInvoke.type = 'text/javascript';
+        scriptInvoke.src = 'https://www.highperformanceformat.com/93a193b076fd180d29521c7b352feee3/invoke.js';
+        
+        adSpace.appendChild(scriptConfig);
+        adSpace.appendChild(scriptInvoke);
+    }
+
     window.onload = function() {
         let params = new URLSearchParams(window.location.search);
         if(params.has('go')) {
@@ -97,7 +115,11 @@
         document.getElementById('stepTxt').innerText = "Step " + current + " of " + total;
         document.getElementById('nextBtn').classList.add('hidden');
         document.getElementById('timer').classList.remove('hidden');
+        document.getElementById('msgHeader').innerText = "Ads Play Ho Rahe Hain...";
         
+        // Naya Ad Load Karein
+        loadAdsterra();
+
         let timeLeft = 10;
         document.getElementById('sec').innerText = timeLeft;
 
@@ -108,8 +130,10 @@
                 clearInterval(interval);
                 document.getElementById('timer').classList.add('hidden');
                 document.getElementById('nextBtn').classList.remove('hidden');
+                document.getElementById('msgHeader').innerText = "Step Ready!";
                 if(current == total) {
                     document.getElementById('nextBtn').innerText = "Get Final Link";
+                    document.getElementById('nextBtn').style.background = "#28a745";
                 }
             }
         }, 1000);
@@ -118,12 +142,14 @@
     function nextStep() {
         if(current < total) {
             current++;
-            startProcess(); // Agla step (ad) play hoga
+            startProcess(); 
         } else {
+            // Final Link Open karne se pehle loader dikha sakte hain
+            document.getElementById('msgHeader').innerText = "Redirecting...";
             window.location.href = targetLink;
         }
     }
 </script>
 
 </body>
-          </html>
+</html>
