@@ -3,108 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Shortener & Monetizer</title>
+    <title>Smart Multi-Ad Player</title>
     <style>
-        body { font-family: 'Arial', sans-serif; background: #f0f2f5; text-align: center; padding: 20px; }
-        .box { background: white; max-width: 500px; margin: 30px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .ad-container { min-height: 260px; background: #fafafa; margin: 20px 0; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-        .btn { background: #007bff; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 18px; font-weight: bold; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        #timer { font-size: 24px; color: #e74c3c; font-weight: bold; margin: 15px 0; }
+        :root { --primary: #00ff88; --dark: #0a0a0a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #161616; max-width: 450px; margin: 30px auto; padding: 30px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
+        .timer { font-size: 60px; color: var(--primary); font-weight: 800; margin: 20px 0; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
+        .btn:disabled { background: #222; color: #555; cursor: not-allowed; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
         .hidden { display: none; }
-        .ad-label { font-size: 10px; color: #999; text-transform: uppercase; margin-bottom: 5px; }
+        .badge { background: #333; padding: 5px 15px; border-radius: 50px; font-size: 12px; color: var(--primary); margin-bottom: 15px; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div id="maker" class="box">
-    <h3>🔗 Short Link Generator</h3>
-    <input type="text" id="urlInput" placeholder="Apna Link Yahan Paste Karein">
-    
-    <label style="display:block; text-align:left; margin-top:10px; font-size: 14px;">Kitne Ads Steps Lagane Hain?</label>
-    <select id="adCount" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px;">
-        <option value="1">1 Step (Fast)</option>
-        <option value="2">2 Steps</option>
-        <option value="3">3 Steps</option>
-        <option value="5">5 Steps (Max Earnings)</option>
+<div id="maker" class="card">
+    <h2>🔗 Permanent Link Maker</h2>
+    <input type="text" id="longUrl" placeholder="https://your-destination-link.com">
+    <select id="adSteps" style="width:100%; padding:10px; border-radius:8px; margin-bottom:10px;">
+        <option value="1">1 Ad Step (30s)</option>
+        <option value="2">2 Ad Steps (60s)</option>
+        <option value="3">3 Ad Steps (90s)</option>
     </select>
-
-    <button class="btn" onclick="generate()">Create Short Link</button>
-    
-    <div id="out" class="hidden" style="margin-top:20px; padding-top:15px; border-top:1px solid #eee;">
-        <p style="font-size: 14px; font-weight: bold;">Aapka Monetized Link:</p>
-        <input type="text" id="res" readonly style="background: #e9ecef;">
-        <button class="btn" style="background: #28a745;" onclick="copyLink()">Copy Link</button>
+    <button class="btn" onclick="generate()">Create Ad-Link</button>
+    <div id="out" class="hidden">
+        <p style="font-size:12px; color:#888; margin-top:15px;">Ise copy karke kahin bhi share karein:</p>
+        <input type="text" id="res" readonly style="border:1px solid var(--primary);">
+        <button class="btn" style="background:#fff;" onclick="copy()">Copy Link</button>
     </div>
 </div>
 
-<div id="player" class="box hidden">
-    <div style="font-size: 14px; color: #666; font-weight: bold;" id="stepTxt">Step 1 of X</div>
-    <h2 style="font-size: 18px; margin: 10px 0;">Please wait...</h2>
+<div id="player" class="card hidden">
+    <div class="badge" id="stepInfo">Step 1 of X</div>
+    <h3>Verify to Human ❌</h3>
+    <p style="color:#aaa; font-size:14px;"> Open this link 📥..Only 18+ mambers </p>
     
-    <div class="ad-label"></div>
-    <div class="ad-container" id="adBox">
-        </div>
+    <button id="adBtn" class="btn" onclick="playRandomAd()">🔞 Open Full Video 🔞 </button>
 
-    <div id="timer">Intezar Karein: <span id="sec">10</span>s</div>
-    <button id="nextBtn" class="btn hidden" onclick="nextStep()">Continue Next Step</button>
+    <div id="timerSection" class="hidden">
+        <div class="timer" id="clock">40</div>
+        <p>Please Wait ......</p>
+    </div>
+
+    <button id="nextBtn" class="btn hidden" style="background:#fff;" onclick="handleNext()">Next Step ➔</button>
 </div>
 
 <script>
-    let current = 1, total = 1, targetLink = "";
-
-    // Ad refresh karne ke liye function
-    function injectAd() {
-        const adBox = document.getElementById('adBox');
-        adBox.innerHTML = ''; // Purana ad hatao
-        
-        const script1 = document.createElement('script');
-        script1.type = 'text/javascript';
-        script1.text = `
-            atOptions = {
-                'key' : '93a193b076fd180d29521c7b352feee3',
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-            };
-        `;
-        
-        const script2 = document.createElement('script');
-        script2.type = 'text/javascript';
-        script2.src = 'https://www.highperformanceformat.com/93a193b076fd180d29521c7b352feee3/invoke.js';
-        
-        adBox.appendChild(script1);
-        adBox.appendChild(script2);
-    }
+    let cur = 1, total = 1, finalDest = "";
+    
+    // YAHAN AAP ALAG-ALAG ADS DAL SAKTI HAIN
+    const adsList = [
+        "https://www.effectivegatecpm.com/u2r35et0?key=6b243c60db90fb54674a55e15b08f633", 
+        "https://www.effectivegatecpm.com/ksf327ymsq?key=2d41928d90f8a369a2ad7d5dac3b9181", // Aap yahan dusri key wala link bhi dal sakti hain
+        "https://www.effectivegatecpm.com/pstv9zrrb?key=115aa86458e695ee58c99ccddd3b59a7"
+    ];
 
     function generate() {
-        let inputUrl = document.getElementById('urlInput').value;
-        if(!inputUrl) { alert("Pehle link dalein!"); return; }
-        
-        let ads = document.getElementById('adCount').value;
-        let encoded = btoa(inputUrl); // URL Encode
-        let shortUrl = window.location.href.split('?')[0] + "?go=" + encoded + "&s=" + ads;
-        
-        document.getElementById('res').value = shortUrl;
+        let u = document.getElementById('longUrl').value;
+        if(!u) return alert("Link enter karein!");
+        let s = document.getElementById('adSteps').value;
+        let short = window.location.href.split('?')[0] + "?u=" + btoa(u) + "&s=" + s;
+        document.getElementById('res').value = short;
         document.getElementById('out').classList.remove('hidden');
     }
 
-    function copyLink() {
-        let copyText = document.getElementById("res");
-        copyText.select();
-        document.execCommand("copy");
-        alert("Link Copy Ho Gaya!");
-    }
-
     window.onload = function() {
-        let params = new URLSearchParams(window.location.search);
-        if(params.has('go')) {
+        let p = new URLSearchParams(window.location.search);
+        if(p.has('u')) {
             document.getElementById('maker').classList.add('hidden');
             document.getElementById('player').classList.remove('hidden');
-            
-            targetLink = atob(params.get('go'));
-            total = parseInt(params.get('s'));
+            finalDest = atob(p.get('u'));
+            total = parseInt(p.get('s'));
+            document.getElementById('stepInfo').innerText = `Step ${cur} of ${total}`;
+        }
+    }
+
+    function playRandomAd() {
+        // Random ad select karna list se
+        let randomAd = adsList[Math.floor(Math.random() * adsList.length)];
+        window.open(randomAd, '_blank');
+
+        document.getElementById('adBtn').classList.add('hidden');
+        document.getElementById('timerSection').classList.remove('hidden');
+
+        let time = 30;
+        let timer = setInterval(() => {
+            time--;
+            document.getElementById('clock').innerText = time;
+            if(time <= 0) {
+                clearInterval(timer);
+                document.getElementById('timerSection').classList.add('hidden');
+                document.getElementById('nextBtn').classList.remove('hidden');
+                if(cur == total) document.getElementById('nextBtn').innerText = "Unlock Video Link";
+            }
+        }, 1000);
+    }
+
+    function handleNext() {
+        if(cur < total) {
+            cur++;
+            document.getElementById('stepInfo').innerText = `Step ${cur} of ${total}`;
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('adBtn').classList.remove('hidden');
+            document.getElementById('clock').innerText = "30";
+        } else {
+            window.location.href = finalDest;
+        }
+    }
+
+    function copy() {
+        let r = document.getElementById('res'); r.select(); document.execCommand('copy'); alert("Link Copied!");
+    }
+</script>
+
+</body>
+    </html>            total = parseInt(params.get('s'));
             startProcess();
         }
     }
