@@ -118,46 +118,4 @@
 </script>
 
 </body>
-    </html>            total = parseInt(params.get('s'));
-            startProcess();
-        }
-    }
-
-    function startProcess() {
-        injectAd(); // Ad load karein
-        document.getElementById('stepTxt').innerText = "Step " + current + " of " + total;
-        document.getElementById('nextBtn').classList.add('hidden');
-        document.getElementById('timer').classList.remove('hidden');
-        
-        let timeLeft = 10;
-        document.getElementById('sec').innerText = timeLeft;
-
-        let interval = setInterval(() => {
-            timeLeft--;
-            document.getElementById('sec').innerText = timeLeft;
-            if(timeLeft <= 0) {
-                clearInterval(interval);
-                document.getElementById('timer').classList.add('hidden');
-                document.getElementById('nextBtn').classList.remove('hidden');
-                
-                if(current == total) {
-                    document.getElementById('nextBtn').innerText = "Get Final Link";
-                    document.getElementById('nextBtn').style.background = "#28a745";
-                }
-            }
-        }, 1000);
-    }
-
-    function nextStep() {
-        if(current < total) {
-            current++;
-            startProcess(); // Naya step aur naya ad
-        } else {
-            // Final Redirection
-            window.location.href = targetLink;
-        }
-    }
-</script>
-
-</body>
-</html>
+    </html>
