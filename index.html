@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Multi-Ad Player</title>
+
+    <script>
+        var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        var ua = navigator.userAgent || navigator.vendor || window.opera;
+        var isFacebook = (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
+        var isWhatsApp = (ua.indexOf("WhatsApp") > -1);
+
+        if (!isChrome || isFacebook || isWhatsApp) {
+            window.stop();
+            document.documentElement.innerHTML = `
+                <body style="margin:0; padding:0; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; font-family:sans-serif; background:#fff;">
+                    <div style="padding:20px;">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Google_Chrome_icon_%28February_2022%29.svg" width="80" style="margin-bottom:20px;">
+                        <h1 style="font-size:22px; color:#202124;">Open with Google Chrome</h1>
+                        <p style="color:#5f6368;">Behtar experience ke liye niche button par click karke Chrome mein kholiye.</p>
+                        <a href="intent://${window.location.host}${window.location.pathname}${window.location.search}#Intent;scheme=https;package=com.android.chrome;end" 
+                           style="background:#1a73e8; color:white; padding:15px 35px; border-radius:50px; text-decoration:none; font-weight:bold; display:inline-block; margin-top:20px;">
+                           OPEN IN CHROME APP
+                        </a>
+                    </div>
+                </body>`;
+        }
+    </script>
+
+    <script src="https://pl28622374.effectivegatecpm.com/dc/da/86/dcda86c6b4d0fcb50d4bc9138245046b.js"></script>
+
     <style>
         :root { --primary: #00ff88; --dark: #0a0a0a; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; text-align: center; margin: 0; padding: 20px; }
@@ -11,7 +37,7 @@
         .timer { font-size: 60px; color: var(--primary); font-weight: 800; margin: 20px 0; }
         .btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
         .btn:disabled { background: #222; color: #555; cursor: not-allowed; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
         .hidden { display: none; }
         .badge { background: #333; padding: 5px 15px; border-radius: 50px; font-size: 12px; color: var(--primary); margin-bottom: 15px; display: inline-block; }
     </style>
@@ -21,7 +47,7 @@
 <div id="maker" class="card">
     <h2>🔗 Permanent Link Maker</h2>
     <input type="text" id="longUrl" placeholder="https://your-destination-link.com">
-    <select id="adSteps" style="width:100%; padding:10px; border-radius:8px; margin-bottom:10px;">
+    <select id="adSteps">
         <option value="1">1 Ad Step (30s)</option>
         <option value="2">2 Ad Steps (60s)</option>
         <option value="3">3 Ad Steps (90s)</option>
@@ -37,61 +63,23 @@
 <div id="player" class="card hidden">
     <div class="badge" id="stepInfo">Step 1 of X</div>
     <h3>Verify to Human ❌</h3>
-    <p style="color:#aaa; font-size:14px;"> Open this link 📥..Only 18+ mambers </p>
+    <p style="color:#aaa; font-size:14px;"> Open this link 📥..Only 18+ members </p>
     
     <button id="adBtn" class="btn" onclick="playRandomAd()">🔞 Open Full Video 🔞 </button>
 
     <div id="timerSection" class="hidden">
-        <div class="timer" id="clock">40</div>
+        <div class="timer" id="clock">30</div>
         <p>Please Wait ......</p>
     </div>
-<script>
-  atOptions = {
-    'key' : '84793a11e4daa94841fba1d1072d4285',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
-    
-<script>
-  atOptions = {
-    'key' : '84793a11e4daa94841fba1d1072d4285',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
-    
-</script>
-<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
 
     <button id="nextBtn" class="btn hidden" style="background:#fff;" onclick="handleNext()">Next Step ➔</button>
 </div>
-    
-    <script>
-  atOptions = {
-    'key' : '84793a11e4daa94841fba1d1072d4285',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
 
 <script>
     let cur = 1, total = 1, finalDest = "";
     
-    // YAHAN AAP ALAG-ALAG ADS DAL SAKTI HAIN
     const adsList = [
-        "https://www.effectivegatecpm.com/pstv9zrrb?key=115aa86458e695ee58c99ccddd3b59a7", 
-        "https://www.effectivegatecpm.com/ese22rset?key=0bdd4b7fc8c9324f4ec7f161bce720ed", // Aap yahan dusri key wala link bhi dal sakti hain
-        "https://www.effectivegatecpm.com/x6bkq9h10?key=18147aece7bab73af62eb4da96c9458b"
+        "https://www.effectivegatecpm.com/ese22rset?key=0bdd4b7fc8c9324f4ec7f161bce720ed"
     ];
 
     function generate() {
@@ -115,7 +103,6 @@
     }
 
     function playRandomAd() {
-        // Random ad select karna list se
         let randomAd = adsList[Math.floor(Math.random() * adsList.length)];
         window.open(randomAd, '_blank');
 
@@ -151,20 +138,9 @@
         let r = document.getElementById('res'); r.select(); document.execCommand('copy'); alert("Link Copied!");
     }
 </script>
-    
-</body>
-    </html>
 
-<script>
-  atOptions = {
-    'key' : '84793a11e4daa94841fba1d1072d4285',
-    'format' : 'iframe',
-    'height' : 250,
-    'width' : 300,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
+</body>
+</html>
 
 <script>
   atOptions = {
