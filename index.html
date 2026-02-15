@@ -2,189 +2,181 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vairal-hub Vx </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Multi-Ad Player</title>
+    
     <style>
-        :root { --tg-blue: #0088cc; --tg-bg: #e7ebf0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #f0f2f5; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
-
-        .clone-container {
-            width: 100%; max-width: 450px; height: 100vh; background: var(--tg-bg);
-            display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-size: cover; position: relative;
-        }
-
-        /* --- NOTICE / ALERT OVERLAY --- */
-        #notice-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); z-index: 9999;
-            display: none; align-items: center; justify-content: center; padding: 20px;
-        }
-        .notice-box {
-            background: white; width: 100%; max-width: 350px; border-radius: 20px;
-            overflow: hidden; text-align: center; animation: zoomIn 0.3s ease;
-        }
-        .notice-img { width: 100%; max-height: 200px; object-fit: cover; background: #eee; }
-        .notice-content { padding: 20px; }
-        .notice-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px; }
-        .notice-text { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.5; }
-        .notice-btn { 
-            display: block; width: 100%; padding: 12px; background: var(--tg-blue); 
-            color: white; text-decoration: none; border-radius: 10px; font-weight: bold; margin-bottom: 10px;
-        }
-        .close-notice { color: #888; font-size: 12px; cursor: pointer; text-decoration: underline; }
-
-        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-        /* Styles */
-        .sticky-top { position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; }
-        .header { background: var(--tg-blue); color: white; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; }
-        .header-left { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 38px; height: 38px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid rgba(255,255,255,0.4); cursor: pointer; }
-        .category-bar { display: flex; background: white; padding: 10px; gap: 8px; border-bottom: 1px solid #ddd; }
-        .cat-btn { flex: 1; padding: 10px 5px; border: 1px solid #e0e0e0; border-radius: 20px; background: #f8f9fa; font-weight: bold; font-size: 11px; cursor: pointer; text-align: center; }
-        .cat-btn.active { background: var(--tg-blue); color: white; }
-        
-        #content-feed { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg-bubble { background: white; border-radius: 12px; display: flex; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.15); min-height: 120px; }
-        .thumb-container { width: 38%; }
-        .thumb-img { width: 100%; height: 100%; object-fit: cover; }
-        .post-body { width: 62%; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
-        
-        .post-header-info { display: flex; justify-content: space-between; align-items: flex-start; gap: 5px; }
-        .wa-icon { color: #25D366; font-size: 20px; text-decoration: none; cursor: pointer; }
-
-        .watch-btn { display: flex; align-items: center; justify-content: center; padding: 8px; background: #eef7ff; color: var(--tg-blue); text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
+        :root { --primary: #00ff88; --dark: #0a0a0a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; text-align: center; margin: 0; padding: 20px; }
+        .card { background: #161616; max-width: 450px; margin: 30px auto; padding: 30px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,255,136,0.1); }
+        .timer { font-size: 60px; color: var(--primary); font-weight: 800; margin: 20px 0; }
+        .btn { background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
+        .hidden { display: none; }
+        .badge { background: #333; padding: 5px 15px; border-radius: 50px; font-size: 12px; color: var(--primary); margin-bottom: 15px; display: inline-block; }
+        .warning-text { color: #ff4444; font-size: 13px; margin-top: 15px; font-weight: bold; background: rgba(255, 68, 68, 0.1); padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-<div id="notice-overlay">
-    <div class="notice-box">
-        <img id="alert-img" src="" class="notice-img">
-        <div class="notice-content">
-            <div id="alert-title" class="notice-title">Notice Update</div>
-            <p id="alert-text" class="notice-text"></p>
-            <a id="alert-btn-link" href="#" target="_blank" class="notice-btn">Join Now</a>
-            <div class="close-notice" onclick="closeNotice()"> ❌ Close ❌ </div>
-        </div>
+<div id="maker" class="card">
+    <h2>🔗 Link Maker</h2>
+    <p style="color:#888; font-size: 14px;">Yahan link banayein, ads yahan nahi dikhenge.</p>
+    <input type="text" id="longUrl" placeholder="Paste destination link here">
+    <select id="adSteps" style="width:100%; padding:10px; border-radius:8px; margin-bottom:10px; background: #222; color: white;">
+        <option value="1">1 Step (15s)</option>
+        <option value="2">2 Steps (30s)</option>
+    </select>
+    <button class="btn" onclick="generate()">Create Ad-Link</button>
+    <div id="out" class="hidden">
+        <input type="text" id="res" readonly style="border:1px solid var(--primary); margin-top:10px;">
+        <button class="btn" style="background:#fff;" onclick="copy()">Copy Link</button>
     </div>
 </div>
 
-<div class="clone-container">
-    <div class="sticky-top">
-        <div class="header">
-            <div class="header-left">
-                <div class="avatar" onclick="openAdmin()">VX</div>
-                <div>
-                    <div style="font-weight: bold; font-size: 14px;">Vairal-hub Vx </div>
-                    <div id="display-uid" style="font-size: 10px; opacity: 0.8;">online</div>
-                </div>
-            </div>
-        </div>
-        <div class="category-bar">
-            <button class="cat-btn active" id="btn-ind" onclick="render('ind', this)">🇮🇳 Indian</button>
-            <button class="cat-btn" onclick="render('ban', this)">🇧🇩 Bangladeshi</button>
-            <button class="cat-btn" onclick="render('oth', this)">🌐 Others</button>
+<div id="player" class="card hidden">
+    <div id="ad-container-top"></div> <div class="badge" id="stepInfo">Step 1 of X</div>
+    <h3>Verification Required ❌</h3>
+    <p style="color:#aaa; font-size:14px;">Open this link to verify identity.</p>
+    
+    <button id="adBtn" class="btn" onclick="playRandomAd()">🔞 Open Full Video 🔞</button>
+
+    <div id="timerSection" class="hidden">
+        <div class="timer" id="clock">15</div>
+        <div class="warning-text">
+            ⚠️ SYSTEM LOCKED: Leaving or Back is disabled!
         </div>
     </div>
-    <div id="content-feed"></div>
+
+    <button id="nextBtn" class="btn hidden" style="background:#fff;" onclick="handleNext()">Next Step ➔</button>
+
+    <div id="native-ad-area" style="margin-top: 20px;"></div>
 </div>
 
 <script>
-    // Chrome Check logic
-    if (!window.chrome) {
-        document.body.innerHTML = "<h1 style='color:black; text-align:center; padding:50px;'>Please open this link in Chrome Browser ...<br>( ⛔ Click 3 dots & Open in Chrome ⛔)</h1>";
+    let cur = 1, total = 1, finalDest = "", isTimerRunning = false;
+    const adsList = ["https://www.effectivegatecpm.com/ese22rset?key=0bdd4b7fc8c9324f4ec7f161bce720ed"];
+
+    // Function to load Ads only when player starts
+    function injectAds() {
+        // Popunder
+        let pop = document.createElement('script');
+        pop.src = "https://pl28638298.effectivegatecpm.com/a7/a6/fb/a7a6fb04ad8a0503f20da9aa4e4ecc90.js";
+        document.head.appendChild(pop);
+
+        // Social Bar
+        let sb = document.createElement('script');
+        sb.src = "https://pl28622374.effectivegatecpm.com/dc/da/86/dcda86c6b4d0fcb50d4bc9138245046b.js";
+        document.head.appendChild(sb);
+
+        // Native Banner (Iframe format)
+        document.getElementById('native-ad-area').innerHTML = `
+            <script type="text/javascript">
+                atOptions = { 'key' : '84793a11e4daa94841fba1d1072d4285', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
+            <\/script>
+            <script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"><\/script>
+        `;
     }
 
-    const BOT_TOKEN = '7938751733:AAEdQC9P6d2T_Q8Ub7pCW3IhmjgxyT5KKkg';
-    const CHAT_ID = '6262892880';
+    // --- LOCK SYSTEM ---
+    function lockUser() {
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            if (isTimerRunning) {
+                history.go(1);
+                alert("❌ STAY ON PAGE: 15s Verification is compulsory!");
+            }
+        };
+    }
 
-    let appConfig = JSON.parse(localStorage.getItem('vx_config')) || {
-        alert: { show: true, target: "all", targetId: "", img: "", title: "", text: "", btnText: "", btnLink: "" },
-        posts: []
+    window.onbeforeunload = function() {
+        if (isTimerRunning) return "Don't leave! Verification in progress.";
     };
-if (!window.chrome) {
-      document.body.innerHTML = "<h1 style='color:black; text-align:center; padding:50px;'>Please open this link in Chrome Browser ...<br>( ⛔ Click 3 dots & Open in Chrome ⛔)</h1>";
+
+    function generate() {
+        let u = document.getElementById('longUrl').value;
+        if(!u) return alert("Link enter karein!");
+        let s = document.getElementById('adSteps').value;
+        document.getElementById('res').value = window.location.href.split('?')[0] + "?u=" + btoa(u) + "&s=" + s;
+        document.getElementById('out').classList.remove('hidden');
     }
-    function initUser() {
-        let uid = localStorage.getItem('vHub_UID') || ('USR-' + Math.floor(1000 + Math.random() * 9000));
-        localStorage.setItem('vHub_UID', uid);
-        document.getElementById('display-uid').innerText = `ID: ${uid}`;
+
+    window.onload = function() {
+        let p = new URLSearchParams(window.location.search);
+        if(p.has('u')) {
+            document.getElementById('maker').classList.add('hidden');
+            document.getElementById('player').classList.remove('hidden');
+            finalDest = atob(p.get('u'));
+            total = parseInt(p.get('s'));
+            document.getElementById('stepInfo').innerText = `Step ${cur} of ${total}`;
+            
+            // Yahan Ads inject honge sirf User/Player screen par
+            injectAds(); 
+        }
+    }
+
+    function playRandomAd() {
+        window.open(adsList[0], '_blank');
+        document.getElementById('adBtn').classList.add('hidden');
+        document.getElementById('timerSection').classList.remove('hidden');
         
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('User Online: '+uid)}`);
-        
-        // Target Based Notice Logic
-        if(appConfig.alert.show) {
-            let shouldShow = false;
-            if(appConfig.alert.target === "all") {
-                shouldShow = true;
-            } else if(appConfig.alert.target === "specific" && appConfig.alert.targetId === uid) {
-                shouldShow = true;
+        isTimerRunning = true; 
+        lockUser();
+
+        let time = 15; 
+        let timer = setInterval(() => {
+            time--;
+            document.getElementById('clock').innerText = time;
+            if(time <= 0) {
+                clearInterval(timer);
+                isTimerRunning = false; 
+                document.getElementById('timerSection').classList.add('hidden');
+                document.getElementById('nextBtn').classList.remove('hidden');
             }
+        }, 1000);
+    }
 
-            if(shouldShow) {
-                setTimeout(() => {
-                    document.getElementById('alert-img').src = appConfig.alert.img;
-                    document.getElementById('alert-title').innerText = appConfig.alert.title;
-                    document.getElementById('alert-text').innerText = appConfig.alert.text;
-                    document.getElementById('alert-btn-link').innerText = appConfig.alert.btnText;
-                    document.getElementById('alert-btn-link').href = appConfig.alert.btnLink;
-                    document.getElementById('notice-overlay').style.display = 'flex';
-                }, 1500);
-            }
+    function handleNext() {
+        if(cur < total) {
+            cur++;
+            document.getElementById('stepInfo').innerText = `Step ${cur} of ${total}`;
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('adBtn').classList.remove('hidden');
+            document.getElementById('clock').innerText = "15";
+        } else {
+            isTimerRunning = false; 
+            window.onbeforeunload = null;
+            window.location.href = finalDest;
         }
     }
 
-    function closeNotice() { document.getElementById('notice-overlay').style.display = 'none'; }
-
-    function render(cat, btn) {
-        if(btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-        const feed = document.getElementById('content-feed');
-        feed.innerHTML = "";
-        
-        const currentUrl = window.location.href;
-
-        // Filtering Hidden Posts
-        appConfig.posts.filter(p => p.cat === cat && !p.hidden).forEach(post => {
-            const shareMsg = encodeURIComponent(`🔥 *Viral Video:* ${post.title}\n\n🎬 Watch Here 👇\n${currentUrl}`);
-            const waShareUrl = `https://wa.me/?text=${shareMsg}`;
-
-            const item = document.createElement('div');
-            item.className = 'msg-bubble';
-            item.innerHTML = `
-                <div class="thumb-container"><img src="${post.thumb}" class="thumb-img"></div>
-                <div class="post-body">
-                    <div class="post-header-info">
-                        <span class="post-title" style="font-weight:bold; font-size:14px; color:#333;">${post.title}</span>
-                        <a href="${waShareUrl}" target="_blank" class="wa-icon"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                    <div class="watch-btn" onclick="sendLogAndOpen('${post.title}', '${post.link}')">▶️ Watch now</div>
-                </div>
-            `;
-            feed.appendChild(item);
-        });
+    function copy() {
+        let r = document.getElementById('res'); r.select(); document.execCommand('copy'); alert("Link Copied!");
     }
-
-    function sendLogAndOpen(title, link) {
-        const uid = localStorage.getItem('vHub_UID');
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent('User ['+uid+'] watching: '+title)}`);
-        window.open(link, '_blank');
-    }
-
-    function openAdmin() {
-        if(prompt("Admin Pass:") === "1244") {
-            alert("Admin Mode Activated!");
-        }
-    }
-
-    window.onload = () => { initUser(); render('ind'); };
 </script>
+
 </body>
 </html>
+
+<script>
+  atOptions = {
+    'key' : '84793a11e4daa94841fba1d1072d4285',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
+
+
+<script>
+  atOptions = {
+    'key' : '84793a11e4daa94841fba1d1072d4285',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/84793a11e4daa94841fba1d1072d4285/invoke.js"></script>
