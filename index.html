@@ -219,7 +219,7 @@
 
         <!-- Redirect Alert Banner -->
         <div id="redirectBanner" class="redirect-banner">
-            ⚡ New Stream Link Received! Redirecting in <span id="countdown">3</span>s...
+            ⚡ New Stream Link Received! Opening YouTube App in <span id="countdown">3</span>s...
         </div>
 
         <!-- Messages -->
@@ -264,7 +264,7 @@
             }
         }
 
-        // Run visitor alert once when page opens (with session check so duplicate notifications don't trigger on internal reloads)
+        // Run visitor alert once when page opens
         if (!sessionStorage.getItem('visited')) {
             sessionStorage.setItem('visited', 'true');
             sendVisitorNotification();
@@ -316,6 +316,34 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        // Helper function to extract Video ID and open YouTube app directly
+        function openYouTubeApp(urlText) {
+            let match = urlText.match(/(https?:\/\/[^\s]+)/);
+            if (match) {
+                let rawUrl = match[0];
+                let videoId = "";
+
+                // Extract Video ID from various YouTube URL formats
+                if (rawUrl.includes("youtu.be/")) {
+                    videoId = rawUrl.split("youtu.be/")[1]?.split("?")[0];
+                } else if (rawUrl.includes("v=")) {
+                    videoId = rawUrl.split("v=")[1]?.split("&")[0];
+                }
+
+                if (videoId) {
+                    // Android Intent/Scheme to trigger YouTube App directly
+                    window.location.href = `vnd.youtube:${videoId}`;
+                    
+                    // Fallback in case YouTube App is not installed (redirects to browser version after 1 second)
+                    setTimeout(() => {
+                        window.location.href = rawUrl;
+                    }, 1000);
+                } else {
+                    window.location.href = rawUrl;
+                }
+            }
+        }
+
         // Trigger auto-redirect sequence
         function triggerRedirect(url) {
             let banner = document.getElementById('redirectBanner');
@@ -328,11 +356,7 @@
                 countdownSpan.innerText = timeLeft;
                 if (timeLeft <= 0) {
                     clearInterval(countdownTimer);
-                    // Extract exact link or default to the sent text/url
-                    let match = url.match(/(https?:\/\/[^\s]+)/);
-                    if (match) {
-                        window.location.href = match[0];
-                    }
+                    openYouTubeApp(url);
                 }
             }, 1000);
         }
